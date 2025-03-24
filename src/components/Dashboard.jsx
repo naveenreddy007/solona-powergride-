@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createNeighborhood } from '../models/EnergyModel';
 import { setupWallets, matchEnergyNeeds, getTransactionHistory, verifySolanaConnection, getMarketStatistics, getExplorerLink } from '../solana/energyTrading';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
 import './Dashboard.css';
-import { Link } from 'react-router-dom';
 
 // Register ChartJS components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+Chart.register(...registerables);
 
 function calculateEnergyBalance(building) {
   // If the building object has the getEnergyBalance method, use it
@@ -84,7 +82,7 @@ function ensureBuildingMethods(building, timeOfDay, weather) {
   return enhanced;
 }
 
-const Dashboard = () => {
+const Dashboard = ({ navigateTo }) => {
   const [buildings, setBuildings] = useState([]);
   const [timeOfDay, setTimeOfDay] = useState(12); // Noon
   const [weather, setWeather] = useState('sunny');
@@ -527,9 +525,9 @@ const Dashboard = () => {
             </select>
           </div>
           <div className="time-display">Time: {Math.floor(timeOfDay)}:{(timeOfDay % 1 * 60).toFixed(0).padStart(2, '0')}</div>
-          <Link to="/marketplace" className="marketplace-link">
-            <button className="btn">Energy Marketplace</button>
-          </Link>
+          <button className="btn marketplace-link" onClick={() => navigateTo('marketplace')}>
+            Energy Marketplace
+          </button>
         </div>
       </header>
       
@@ -559,13 +557,31 @@ const Dashboard = () => {
         <div className="chart-card">
           <h3>Energy Production & Consumption</h3>
           <div style={{ height: '300px' }}>
-            <Line data={energyChartData} options={energyChartOptions} />
+            <canvas id="energyChart" ref={(el) => {
+              if (el) {
+                const chartInstance = new Chart(el, {
+                  type: 'line',
+                  data: energyChartData,
+                  options: energyChartOptions
+                });
+                return () => chartInstance.destroy();
+              }
+            }}></canvas>
           </div>
         </div>
         <div className="chart-card">
           <h3>Energy Trading by Building Type</h3>
           <div style={{ height: '300px' }}>
-            <Bar data={getTradeDistributionData()} options={tradeChartOptions} />
+            <canvas id="tradeChart" ref={(el) => {
+              if (el) {
+                const chartInstance = new Chart(el, {
+                  type: 'bar',
+                  data: getTradeDistributionData(),
+                  options: tradeChartOptions
+                });
+                return () => chartInstance.destroy();
+              }
+            }}></canvas>
           </div>
         </div>
       </div>
@@ -576,7 +592,16 @@ const Dashboard = () => {
           <div className="chart-card">
             <h3>Real-time Energy Pricing</h3>
             <div style={{ height: '250px' }}>
-              <Line data={getPriceChartData()} options={priceChartOptions} />
+              <canvas id="priceChart" ref={(el) => {
+                if (el) {
+                  const chartInstance = new Chart(el, {
+                    type: 'line',
+                    data: getPriceChartData(),
+                    options: priceChartOptions
+                  });
+                  return () => chartInstance.destroy();
+                }
+              }}></canvas>
             </div>
           </div>
           <div className="market-stats-card">

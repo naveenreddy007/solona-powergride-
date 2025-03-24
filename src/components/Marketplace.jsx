@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './Marketplace.css';
-import { initSolanaWallet, airdropSolIfNeeded } from '../solana/energyTrading';
+import { setupWallets, executeEnergyTrade } from '../solana/energyTrading';
 
-const Marketplace = () => {
+const Marketplace = ({ navigateTo }) => {
   const [buildings, setBuildings] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [offers, setOffers] = useState([]);
@@ -33,11 +32,9 @@ const Marketplace = () => {
         }
         
         // Ensure all buildings have wallets
-        for (const building of buildingsWithWallets) {
-          if (!building.wallet) {
-            building.wallet = await initSolanaWallet(building.id);
-            await airdropSolIfNeeded(building.wallet);
-          }
+        if (buildingsWithWallets.some(b => !b.wallet)) {
+          // Pass all buildings to setupWallets at once
+          buildingsWithWallets = await setupWallets(buildingsWithWallets);
         }
         
         // Save updated buildings
@@ -131,18 +128,49 @@ const Marketplace = () => {
     try {
       setLoading(true);
       
-      // Create transaction record
+      // Find seller building
+      const sellerBuilding = buildings.find(b => b.id === offer.seller);
+      if (!sellerBuilding) {
+        throw new Error('Seller building not found');
+      }
+      
+      // Execute energy trade on blockchain
+      let txRecord;
+      try {
+        txRecord = await executeEnergyTrade(
+          sellerBuilding, 
+          currentUser, 
+          offer.amount, 
+          offer.price
+        );
+      } catch (error) {
+        console.error('Blockchain transaction failed, using simulation:', error);
+        // Create simulated transaction record
+        txRecord = {
+          timestamp: new Date(),
+          seller: offer.seller,
+          buyer: currentUser.id,
+          energyAmount: offer.amount,
+          price: offer.amount * offer.price,
+          pricePerUnit: offer.price,
+          signature: `sim-${Math.random().toString(36).substring(2, 10)}`,
+          simulated: true
+        };
+      }
+      
+      // Create transaction record for the UI
       const transaction = {
         id: `tx-${Date.now()}`,
         seller: offer.seller,
-        sellerName: offer.sellerName || buildings.find(b => b.id === offer.seller)?.name || 'Unknown',
+        sellerName: offer.sellerName || sellerBuilding.name || 'Unknown',
         buyer: currentUser.id,
         buyerName: currentUser.name,
         amount: offer.amount,
         price: offer.price,
         total: offer.amount * offer.price,
         timestamp: Date.now(),
-        signature: `sim-${Math.random().toString(36).substring(2, 10)}`
+        signature: txRecord.signature,
+        simulated: txRecord.simulated
       };
       
       // Add to transactions
@@ -195,9 +223,12 @@ const Marketplace = () => {
     <div className="marketplace-container">
       <div className="marketplace-header">
         <h1>Solana Energy Marketplace</h1>
-        <Link to="/" className="dashboard-link">
-          <button className="btn btn-secondary">View Dashboard</button>
-        </Link>
+        <button 
+          onClick={() => navigateTo('dashboard')} 
+          className="btn btn-secondary"
+        >
+          View Dashboard
+        </button>
       </div>
       
       {notification && (
@@ -365,4 +396,4 @@ const Marketplace = () => {
   );
 };
 
-export default Marketplace; 
+export default Marketplace;

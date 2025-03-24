@@ -577,7 +577,7 @@ td.numeric {
   margin: 5px 0;
 }
 
-.marketplace-link button {
+.marketplace-link {
   background: linear-gradient(90deg, #4776E6, #8E54E9);
   color: white;
   border: none;
@@ -591,7 +591,7 @@ td.numeric {
   transition: all 0.3s ease;
 }
 
-.marketplace-link button:hover {
+.marketplace-link:hover {
   background: linear-gradient(90deg, #3a67d4, #7e4ad0);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
