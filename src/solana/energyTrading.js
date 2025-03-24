@@ -63,13 +63,23 @@ async function setupWallets(buildings) {
 
 // Execute energy trade between buildings using real Solana transactions
 async function executeEnergyTrade(sellerBuilding, buyerBuilding, energyAmount, pricePerUnit) {
+  // Validate input parameters to prevent errors
+  if (!sellerBuilding || !buyerBuilding) {
+    throw new Error('Invalid building objects provided for energy trade');
+  }
+  
+  if (!sellerBuilding.wallet || !sellerBuilding.wallet.publicKey || 
+      !buyerBuilding.wallet || !buyerBuilding.wallet.publicKey) {
+    throw new Error('Buildings must have valid wallet objects for energy trading');
+  }
+  
   const totalPrice = energyAmount * pricePerUnit;
   const lamports = Math.floor(totalPrice * LAMPORTS_PER_SOL);
   
   console.log(`Executing energy trade on Solana blockchain:
-    Seller: Building ${sellerBuilding.id} (${sellerBuilding.type})
+    Seller: Building ${sellerBuilding.id} (${sellerBuilding.type || 'unknown'})
     Seller Address: ${sellerBuilding.wallet.publicKey.toString()}
-    Buyer: Building ${buyerBuilding.id} (${buyerBuilding.type})
+    Buyer: Building ${buyerBuilding.id} (${buyerBuilding.type || 'unknown'})
     Buyer Address: ${buyerBuilding.wallet.publicKey.toString()}
     Energy: ${energyAmount.toFixed(2)} kWh
     Price: ${totalPrice.toFixed(5)} SOL (${lamports} lamports)`);

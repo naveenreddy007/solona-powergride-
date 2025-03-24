@@ -1,0 +1,436 @@
+.smart-contracts-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.smart-contracts-container header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-section h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+}
+
+.title-section p {
+  margin: 5px 0 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.back-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+}
+
+.wallet-status {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  width: 100%;
+}
+
+.wallet-name {
+  font-weight: 600;
+  color: #3182ce;
+  margin-left: 8px;
+}
+
+.wallet-address {
+  font-family: monospace;
+  background: rgba(203, 213, 224, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.balance {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c5282;
+}
+
+.no-wallet {
+  color: #e53e3e;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.contracts-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  margin-right: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+  color: #7f8c8d;
+}
+
+.tab-button:hover {
+  color: #2c3e50;
+}
+
+.tab-button.active {
+  color: #3498db;
+  border-bottom: 3px solid #3498db;
+  font-weight: 600;
+}
+
+.contracts-content {
+  padding: 20px 0;
+}
+
+/* Form styles */
+.form-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.form-card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.unit {
+  margin-left: 5px;
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.contract-summary,
+.reward-summary {
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.contract-summary strong,
+.reward-summary strong {
+  color: #3498db;
+}
+
+/* Card list styles */
+.card-list {
+  margin-top: 30px;
+}
+
+.card-list h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.contract-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 15px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.contract-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contract-card.active {
+  border-left: 4px solid #2ecc71;
+}
+
+.contract-card.paused,
+.contract-card.cancelled {
+  border-left: 4px solid #e74c3c;
+}
+
+.contract-card.pending,
+.contract-card.ready {
+  border-left: 4px solid #f39c12;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.card-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background-color: #e8f8f5;
+  color: #27ae60;
+}
+
+.status-badge.paused,
+.status-badge.cancelled {
+  background-color: #fdecea;
+  color: #e74c3c;
+}
+
+.status-badge.pending,
+.status-badge.ready {
+  background-color: #fef9e7;
+  color: #f39c12;
+}
+
+.card-body {
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.card-body p {
+  margin: 8px 0;
+  color: #34495e;
+}
+
+.card-body strong {
+  color: #7f8c8d;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-success {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 13px;
+}
+
+.btn-success:hover {
+  background-color: #27ae60;
+}
+
+.btn-warning {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 13px;
+}
+
+.btn-warning:hover {
+  background-color: #d35400;
+}
+
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 13px;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.empty-list {
+  padding: 30px;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #95a5a6;
+  font-style: italic;
+}
+
+.activation-info {
+  background-color: #e8f8f5;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.activation-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.activation-info p:last-child {
+  margin-bottom: 0;
+}
+
+.activation-info strong {
+  color: #27ae60;
+}
+
+/* Responsive styles */
+@media (max-width: 900px) {
+  .form-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .smart-contracts-container header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .back-button {
+    margin-top: 15px;
+  }
+  
+  .wallet-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .wallet-status .balance {
+    margin-top: 5px;
+  }
+  
+  .contracts-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    flex-grow: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .status-badge {
+    margin-top: 5px;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .card-actions button {
+    width: 100%;
+  }
+} 
