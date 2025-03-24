@@ -108,6 +108,16 @@ const Dashboard = ({ navigateTo }) => {
   const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState(null);
   
+  // Chart refs
+  const energyChartRef = useRef(null);
+  const tradeChartRef = useRef(null);
+  const priceChartRef = useRef(null);
+  const chartInstances = useRef({
+    energy: null,
+    trade: null,
+    price: null
+  });
+  
   // Check Solana connection
   useEffect(() => {
     const checkConnection = async () => {
@@ -189,64 +199,182 @@ const Dashboard = ({ navigateTo }) => {
       // Advance time
       setTimeOfDay(time => (time + 0.5) % 24);
       
-      // Update buildings' production and consumption
+      // Update buildings
       const updatedBuildings = buildings.map(building => {
-        try {
-          // Ensure building has all required methods
-          const enhancedBuilding = ensureBuildingMethods(building, timeOfDay, weather);
-          
-          // Now safely call the methods
-          enhancedBuilding.simulateProduction(timeOfDay, weather);
-          enhancedBuilding.simulateConsumption(timeOfDay);
-          
-          return enhancedBuilding;
-        } catch (error) {
-          console.error(`Error updating building ${building.id}:`, error);
-          return building;
-        }
+        const enhanced = ensureBuildingMethods(building, timeOfDay, weather);
+        enhanced.simulateProduction(timeOfDay, weather);
+        enhanced.simulateConsumption(timeOfDay);
+        return enhanced;
       });
       
       setBuildings(updatedBuildings);
       
-      // Update energy history for charts
-      const totalProduction = updatedBuildings.reduce((sum, b) => sum + (b.currentProduction || 0), 0);
-      const totalConsumption = updatedBuildings.reduce((sum, b) => sum + (b.currentConsumption || 0), 0);
-      
+      // Update energy history
       setEnergyHistory(prev => {
+        const totalProduction = updatedBuildings.reduce((sum, b) => sum + (b.currentProduction || 0), 0);
+        const totalConsumption = updatedBuildings.reduce((sum, b) => sum + (b.currentConsumption || 0), 0);
         const timeLabel = `${Math.floor(timeOfDay)}:${(timeOfDay % 1 * 60).toFixed(0).padStart(2, '0')}`;
         
-        // Keep only the last 20 data points to avoid chart overcrowding
-        const labels = [...prev.labels, timeLabel].slice(-20);
-        const production = [...prev.production, totalProduction].slice(-20);
-        const consumption = [...prev.consumption, totalConsumption].slice(-20);
-        
-        return { labels, production, consumption };
+        return {
+          labels: [...(prev.labels || []).slice(-11), timeLabel],
+          production: [...(prev.production || []).slice(-11), totalProduction],
+          consumption: [...(prev.consumption || []).slice(-11), totalConsumption]
+        };
       });
       
+      // Execute trades
       try {
-        // Match energy needs and execute trades
         const newTrades = await matchEnergyNeeds(updatedBuildings);
         if (newTrades && newTrades.length > 0) {
-          setTrades(prev => [...prev, ...newTrades].slice(-50)); // Keep only recent trades
+          setTrades(prev => [...prev, ...newTrades]);
           
           // Update market statistics
           setMarketStats(getMarketStatistics([...trades, ...newTrades]));
           
-          // Calculate savings compared to traditional grid
+          // Update total savings
           const gridPrice = 0.15; // Traditional grid price per kWh
           const p2pPrice = 0.01; // P2P energy price per kWh
-          
-          const totalTraded = newTrades.reduce((sum, trade) => sum + trade.energyAmount, 0);
-          const newSavings = totalTraded * (gridPrice - p2pPrice);
-          setTotalSavings(prev => prev + newSavings);
+          const tradedAmount = newTrades.reduce((sum, trade) => sum + trade.energyAmount, 0);
+          setTotalSavings(prev => prev + tradedAmount * (gridPrice - p2pPrice));
         }
       } catch (error) {
-        console.error('Error executing energy trades:', error);
+        console.error('Error executing trades:', error);
       }
-    }, simulationSpeed); // Update based on selected speed
+    }, 2000 / simulationSpeed);
     
     return () => clearInterval(interval);
   }, [simulationRunning, buildings, timeOfDay, weather, simulationSpeed, isInitializing, trades]);
+  
+  // Initialize charts
+  useEffect(() => {
+    const initCharts = () => {
+      // Clean up existing charts
+      if (chartInstances.current.energy) {
+        chartInstances.current.energy.destroy();
+      }
+      if (chartInstances.current.trade) {
+        chartInstances.current.trade.destroy();
+      }
+      if (chartInstances.current.price) {
+        chartInstances.current.price.destroy();
+      }
+
+      // Energy Flow Chart
+      if (energyChartRef.current) {
+        const energyCtx = energyChartRef.current.getContext('2d');
+        chartInstances.current.energy = new Chart(energyCtx, {
+          type: 'line',
+          data: {
+            labels: energyHistory.labels || [],
+            datasets: [
+              {
+                label: 'Production',
+                data: energyHistory.production || [],
+                borderColor: '#4CAF50',
+                tension: 0.4
+              },
+              {
+                label: 'Consumption',
+                data: energyHistory.consumption || [],
+                borderColor: '#FF5722',
+                tension: 0.4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Energy (kWh)'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Trade Volume Chart
+      if (tradeChartRef.current) {
+        const tradeCtx = tradeChartRef.current.getContext('2d');
+        chartInstances.current.trade = new Chart(tradeCtx, {
+          type: 'bar',
+          data: {
+            labels: trades.map((_, i) => `Trade ${i + 1}`),
+            datasets: [{
+              label: 'Trade Volume',
+              data: trades.map(t => t.energyAmount || 0),
+              backgroundColor: '#2196F3'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Volume (kWh)'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // Price History Chart
+      if (priceChartRef.current) {
+        const priceCtx = priceChartRef.current.getContext('2d');
+        chartInstances.current.price = new Chart(priceCtx, {
+          type: 'line',
+          data: {
+            labels: trades.map((_, i) => `Time ${i}`),
+            datasets: [{
+              label: 'Energy Price',
+              data: trades.map(t => t.pricePerUnit || 0),
+              borderColor: '#9C27B0',
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Price (SOL/kWh)'
+                }
+              }
+            }
+          }
+        });
+      }
+    };
+
+    // Only initialize charts if we have data
+    if (energyHistory && trades) {
+      initCharts();
+    }
+
+    // Cleanup function
+    return () => {
+      if (chartInstances.current.energy) {
+        chartInstances.current.energy.destroy();
+      }
+      if (chartInstances.current.trade) {
+        chartInstances.current.trade.destroy();
+      }
+      if (chartInstances.current.price) {
+        chartInstances.current.price.destroy();
+      }
+    };
+  }, [energyHistory, trades]);
   
   const toggleSimulation = () => {
     setSimulationRunning(!simulationRunning);
@@ -306,159 +434,6 @@ const Dashboard = ({ navigateTo }) => {
         </div>
       );
     }).filter(Boolean); // Filter out any null buildings
-  };
-  
-  // Energy flow chart configuration
-  const energyChartData = {
-    labels: energyHistory.labels.length > 0 ? energyHistory.labels : ['00:00'],
-    datasets: [
-      {
-        label: 'Total Production',
-        data: energyHistory.production.length > 0 ? energyHistory.production : [0],
-        borderColor: '#27ae60',
-        backgroundColor: 'rgba(39, 174, 96, 0.2)',
-        fill: true,
-        tension: 0.3,
-      },
-      {
-        label: 'Total Consumption',
-        data: energyHistory.consumption.length > 0 ? energyHistory.consumption : [0],
-        borderColor: '#e74c3c',
-        backgroundColor: 'rgba(231, 76, 60, 0.2)',
-        fill: true,
-        tension: 0.3,
-      },
-    ],
-  };
-  
-  const energyChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Energy (kW)',
-        },
-      },
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: 'Energy Production & Consumption',
-      },
-      legend: {
-        position: 'top',
-      },
-    },
-  };
-  
-  // Trade distribution chart by building type
-  const getTradeDistributionData = () => {
-    const buildingTypes = ['residential', 'commercial', 'industrial'];
-    const tradeVolumes = buildingTypes.map(type => {
-      return trades
-        .filter(trade => {
-          const sellerBuilding = buildings.find(b => b.id === trade.seller);
-          return sellerBuilding?.type === type;
-        })
-        .reduce((sum, trade) => sum + trade.energyAmount, 0);
-    });
-    
-    return {
-      labels: buildingTypes.map(t => t.charAt(0).toUpperCase() + t.slice(1)),
-      datasets: [
-        {
-          label: 'Energy Traded (kWh)',
-          data: tradeVolumes,
-          backgroundColor: ['#3498db', '#2ecc71', '#f1c40f'],
-        },
-      ],
-    };
-  };
-  
-  const tradeChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      title: {
-        display: true,
-        text: 'Energy Trading by Building Type (Sellers)',
-      },
-      legend: {
-        display: false,
-      },
-    },
-  };
-  
-  // Energy price chart data
-  const getPriceChartData = () => {
-    // Get the last 10 trades
-    const recentTrades = trades.slice(-10);
-    
-    return {
-      labels: recentTrades.map((_, i) => `Trade ${i+1}`),
-      datasets: [
-        {
-          label: 'Energy Price (SOL/kWh)',
-          data: recentTrades.map(trade => trade.pricePerUnit || 0.01),
-          borderColor: '#8e44ad',
-          backgroundColor: 'rgba(142, 68, 173, 0.2)',
-          borderWidth: 2,
-          pointRadius: 4,
-          tension: 0.2,
-        }
-      ]
-    };
-  };
-  
-  const priceChartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: false,
-        title: {
-          display: true,
-          text: 'Price (SOL/kWh)',
-        },
-      },
-    },
-    plugins: {
-      title: {
-        display: true,
-        text: 'Real-time Energy Pricing',
-      },
-    },
-  };
-  
-  // Transaction type pie chart
-  const getTransactionTypeData = () => {
-    return {
-      labels: ['Real Blockchain', 'Simulated'],
-      datasets: [
-        {
-          data: [marketStats.realTransactions, marketStats.simulatedTransactions],
-          backgroundColor: ['#2ecc71', '#95a5a6'],
-          hoverBackgroundColor: ['#27ae60', '#7f8c8d'],
-        }
-      ]
-    };
-  };
-  
-  const transactionTypeOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      title: {
-        display: true,
-        text: 'Transaction Types',
-      },
-      legend: {
-        position: 'bottom',
-      },
-    },
   };
   
   if (isInitializing) {
@@ -557,31 +532,13 @@ const Dashboard = ({ navigateTo }) => {
         <div className="chart-card">
           <h3>Energy Production & Consumption</h3>
           <div style={{ height: '300px' }}>
-            <canvas id="energyChart" ref={(el) => {
-              if (el) {
-                const chartInstance = new Chart(el, {
-                  type: 'line',
-                  data: energyChartData,
-                  options: energyChartOptions
-                });
-                return () => chartInstance.destroy();
-              }
-            }}></canvas>
+            <canvas id="energyChart" ref={energyChartRef}></canvas>
           </div>
         </div>
         <div className="chart-card">
           <h3>Energy Trading by Building Type</h3>
           <div style={{ height: '300px' }}>
-            <canvas id="tradeChart" ref={(el) => {
-              if (el) {
-                const chartInstance = new Chart(el, {
-                  type: 'bar',
-                  data: getTradeDistributionData(),
-                  options: tradeChartOptions
-                });
-                return () => chartInstance.destroy();
-              }
-            }}></canvas>
+            <canvas id="tradeChart" ref={tradeChartRef}></canvas>
           </div>
         </div>
       </div>
@@ -592,16 +549,7 @@ const Dashboard = ({ navigateTo }) => {
           <div className="chart-card">
             <h3>Real-time Energy Pricing</h3>
             <div style={{ height: '250px' }}>
-              <canvas id="priceChart" ref={(el) => {
-                if (el) {
-                  const chartInstance = new Chart(el, {
-                    type: 'line',
-                    data: getPriceChartData(),
-                    options: priceChartOptions
-                  });
-                  return () => chartInstance.destroy();
-                }
-              }}></canvas>
+              <canvas id="priceChart" ref={priceChartRef}></canvas>
             </div>
           </div>
           <div className="market-stats-card">
