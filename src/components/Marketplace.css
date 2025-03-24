@@ -1,0 +1,460 @@
+.marketplace-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.marketplace-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.marketplace-header h1 {
+  font-size: 2.2rem;
+  color: #2c3e50;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.marketplace-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.user-selector h3,
+.user-details h3 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.building-select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background-color: white;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6"><path d="M0 0l6 6 6-6z" fill="%23666"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  cursor: pointer;
+}
+
+.user-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin-right: 15px;
+  background-color: #e9f7fe;
+}
+
+.user-avatar[data-type="residential"] {
+  background-color: #e3f2fd;
+}
+
+.user-avatar[data-type="commercial"] {
+  background-color: #e8f5e9;
+}
+
+.user-avatar[data-type="industrial"] {
+  background-color: #fff3e0;
+}
+
+.user-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.user-type {
+  margin: 0 0 5px 0;
+  color: #666;
+  text-transform: capitalize;
+  font-size: 0.9rem;
+}
+
+.wallet-address {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+  font-family: monospace;
+  background-color: #f5f5f5;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.create-offer {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+}
+
+/* Main Content Styles */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.marketplace-section, .transaction-section {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.marketplace-section h2, .transaction-section h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: A20px;
+  color: #2c3e50;
+  position: relative;
+  display: inline-block;
+}
+
+.marketplace-section h2:after, .transaction-section h2:after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  border-radius: 10px;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.offer-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #eee;
+}
+
+.offer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.offer-header {
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.energy-amount {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.energy-price {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.offer-details {
+  padding: 15px;
+}
+
+.offer-details p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.offer-time {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.btn {
+  display: inline-block;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #4776E6;
+  color: white;
+  border-color: #4776E6;
+  width: 100%;
+}
+
+.btn-primary:hover {
+  background-color: #3a67d4;
+  border-color: #3a67d4;
+}
+
+.btn-secondary {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  border-color: #ddd;
+}
+
+.btn-secondary:hover {
+  background-color: #e9ecef;
+  border-color: #ccc;
+}
+
+.btn-buy {
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 12px;
+  width: 100%;
+  font-weight: 600;
+}
+
+.btn-buy:hover {
+  background: linear-gradient(90deg, #3a67d4, #7e4ad0);
+}
+
+.btn-buy:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Transaction Table Styles */
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.transaction-table th,
+.transaction-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-table th {
+  background-color: #f8f9fa;
+  color: #555;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.transaction-table tr:last-child td {
+  border-bottom: none;
+}
+
+.transaction-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.sold {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.bought {
+  color: #F44336;
+  font-weight: 500;
+}
+
+.tx-link {
+  color: #4776E6;
+  text-decoration: none;
+  font-family: monospace;
+  padding: 3px 6px;
+  background-color: #f0f4fe;
+  border-radius: 4px;
+}
+
+.tx-link:hover {
+  background-color: #e3ebfd;
+  text-decoration: underline;
+}
+
+/* Empty States */
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #777;
+}
+
+.empty-state p {
+  margin: 0 0 10px 0;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* Notifications */
+.notification {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  animation: slideIn 0.3s forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.notification.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #4CAF50;
+}
+
+.notification.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #F44336;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #4776E6;
+  animation: spin 1s infinite linear;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 900px) {
+  .marketplace-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    order: 2;
+  }
+  
+  .main-content {
+    order: 1;
+  }
+  
+  .offers-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .marketplace-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .offers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .transaction-table {
+    display: block;
+    overflow-x: auto;
+  }
+} 

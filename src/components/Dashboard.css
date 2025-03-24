@@ -575,4 +575,24 @@ td.numeric {
 
 .no-trades p {
   margin: 5px 0;
+}
+
+.marketplace-link button {
+  background: linear-gradient(90deg, #4776E6, #8E54E9);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.marketplace-link button:hover {
+  background: linear-gradient(90deg, #3a67d4, #7e4ad0);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 } 

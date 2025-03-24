@@ -4,6 +4,7 @@ import { setupWallets, matchEnergyNeeds, getTransactionHistory, verifySolanaConn
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import './Dashboard.css';
+import { Link } from 'react-router-dom';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
@@ -526,6 +527,9 @@ const Dashboard = () => {
             </select>
           </div>
           <div className="time-display">Time: {Math.floor(timeOfDay)}:{(timeOfDay % 1 * 60).toFixed(0).padStart(2, '0')}</div>
+          <Link to="/marketplace" className="marketplace-link">
+            <button className="btn">Energy Marketplace</button>
+          </Link>
         </div>
       </header>
       
