@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SmartContracts.css';
+import './ClearButton.css';
 
 const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet }) => {
   const [activeTab, setActiveTab] = useState('tradingRules');
@@ -307,22 +308,32 @@ const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet 
                   
                   <div className="form-group">
                     <label htmlFor="value">Value:</label>
-                    <input 
-                      type="number" 
-                      id="value" 
-                      name="value" 
-                      value={newRule.value}
-                      onChange={handleRuleChange}
-                      step="0.001"
-                      min="0"
-                      required
-                    />
-                    <span className="unit">
-                      {newRule.type === 'price' && 'SOL/kWh'}
-                      {newRule.type === 'time' && 'hour (0-24)'}
-                      {newRule.type === 'production' && 'kWh'}
-                      {newRule.type === 'consumption' && 'kWh'}
-                    </span>
+                    <div className="input-with-clear">
+                      <input 
+                        type="number" 
+                        id="value" 
+                        name="value" 
+                        value={newRule.value}
+                        onChange={handleRuleChange}
+                        step="0.001"
+                        min="0"
+                        required
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => handleRuleChange({target: {name: 'value', value: ''}})}
+                        title="Clear value"
+                      >
+                        ✕
+                      </button>
+                      <span className="unit">
+                        {newRule.type === 'price' && 'SOL/kWh'}
+                        {newRule.type === 'time' && 'hour (0-24)'}
+                        {newRule.type === 'production' && 'kWh'}
+                        {newRule.type === 'consumption' && 'kWh'}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 
@@ -360,7 +371,27 @@ const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet 
                   </div>
                 </div>
                 
-                <button type="submit" className="btn-primary">Create Rule</button>
+                <div className="form-actions">
+                  <button type="submit" className="btn-primary">Create Rule</button>
+                  <button 
+                    type="button" 
+                    className="btn-secondary"
+                    onClick={() => {
+                      setNewRule({
+                        buildingId: '',
+                        type: 'price',
+                        condition: 'above',
+                        value: '',
+                        action: 'sell',
+                        amount: 'excess',
+                        status: 'active',
+                        createdAt: Date.now(),
+                      });
+                    }}
+                  >
+                    Reset Form
+                  </button>
+                </div>
               </form>
             </div>
             
@@ -456,43 +487,75 @@ const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet 
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="energyAmount">Energy Amount (kWh):</label>
-                    <input 
-                      type="number" 
-                      id="energyAmount" 
-                      name="energyAmount" 
-                      value={newContract.energyAmount}
-                      onChange={handleContractChange}
-                      step="0.1"
-                      min="0.1"
-                      required
-                    />
+                    <div className="input-with-clear">
+                      <input 
+                        type="number"
+                        id="energyAmount"
+                        name="energyAmount"
+                        value={newContract.energyAmount}
+                        onChange={handleContractChange}
+                        min="0.1"
+                        step="0.1"
+                        required
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => handleContractChange({target: {name: 'energyAmount', value: ''}})}
+                        title="Clear energy amount"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                   
                   <div className="form-group">
                     <label htmlFor="pricePerUnit">Price per kWh (SOL):</label>
-                    <input 
-                      type="number" 
-                      id="pricePerUnit" 
-                      name="pricePerUnit" 
-                      value={newContract.pricePerUnit}
-                      onChange={handleContractChange}
-                      step="0.001"
-                      min="0.001"
-                      required
-                    />
+                    <div className="input-with-clear">
+                      <input 
+                        type="number"
+                        id="pricePerUnit"
+                        name="pricePerUnit"
+                        value={newContract.pricePerUnit}
+                        onChange={handleContractChange}
+                        min="0.001"
+                        step="0.001"
+                        required
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => handleContractChange({target: {name: 'pricePerUnit', value: ''}})}
+                        title="Clear price"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
-                  
+                </div>
+                
+                <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="deliveryDate">Delivery Date:</label>
-                    <input 
-                      type="date" 
-                      id="deliveryDate" 
-                      name="deliveryDate" 
-                      value={newContract.deliveryDate}
-                      onChange={handleContractChange}
-                      min={new Date().toISOString().split('T')[0]}
-                      required
-                    />
+                    <div className="input-with-clear">
+                      <input 
+                        type="date"
+                        id="deliveryDate"
+                        name="deliveryDate"
+                        value={newContract.deliveryDate}
+                        onChange={handleContractChange}
+                        min={new Date().toISOString().split('T')[0]}
+                        required
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => handleContractChange({target: {name: 'deliveryDate', value: ''}})}
+                        title="Clear date"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
@@ -500,7 +563,24 @@ const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet 
                   <p>Total Contract Value: <strong>{(newContract.energyAmount * newContract.pricePerUnit).toFixed(5)} SOL</strong></p>
                 </div>
                 
-                <button type="submit" className="btn-primary">Create Futures Contract</button>
+                <div className="form-actions">
+                  <button type="submit" className="btn-primary">Create Futures Contract</button>
+                  <button 
+                    type="button" 
+                    className="btn-secondary"
+                    onClick={() => {
+                      setNewContract({
+                        seller: buildings && buildings.length > 0 ? buildings[0].id : '',
+                        buyer: buildings && buildings.length > 1 ? buildings[1].id : '',
+                        energyAmount: '',
+                        pricePerUnit: '',
+                        deliveryDate: new Date(Date.now() + 86400000).toISOString().split('T')[0]
+                      });
+                    }}
+                  >
+                    Reset Form
+                  </button>
+                </div>
               </form>
             </div>
             
@@ -629,7 +709,24 @@ const SmartContracts = ({ buildings, navigateTo, walletBalance, connectedWallet 
                   <p>Maximum Potential Reward: <strong>{(newStabilization.capacity * newStabilization.rewardRate).toFixed(5)} SOL</strong></p>
                 </div>
                 
-                <button type="submit" className="btn-primary">Register Stabilization Service</button>
+                <div className="form-actions">
+                  <button type="submit" className="btn-primary">Register Stabilization Service</button>
+                  <button 
+                    type="button" 
+                    className="btn-secondary"
+                    onClick={() => {
+                      setNewStabilization({
+                        buildingId: buildings && buildings.length > 0 ? buildings[0].id : '',
+                        capacity: 10,
+                        triggerType: 'peak',
+                        rewardRate: 0.1,
+                        duration: 2
+                      });
+                    }}
+                  >
+                    Reset Form
+                  </button>
+                </div>
               </form>
             </div>
             

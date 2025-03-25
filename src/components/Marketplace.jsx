@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Marketplace.css';
+import './ClearButton.css';
 import { setupWallets, executeEnergyTrade } from '../solana/energyTrading';
 
 const Marketplace = ({ navigateTo, buildings, connectedWallet }) => {
@@ -338,31 +339,60 @@ const Marketplace = ({ navigateTo, buildings, connectedWallet }) => {
                 <div className="offer-form">
                   <div className="form-group">
                     <label>Amount (kWh)</label>
-                    <input 
-                      type="number" 
-                      min="0.1" 
-                      step="0.1" 
-                      value={newOffer.amount}
-                      onChange={(e) => setNewOffer({...newOffer, amount: e.target.value})}
-                    />
+                    <div className="input-with-clear">
+                      <input 
+                        type="number" 
+                        min="0.1" 
+                        step="0.1" 
+                        value={newOffer.amount}
+                        onChange={(e) => setNewOffer({...newOffer, amount: e.target.value})}
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => setNewOffer({...newOffer, amount: ''})}
+                        title="Clear amount"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                   <div className="form-group">
                     <label>Price (SOL per kWh)</label>
-                    <input 
-                      type="number" 
-                      min="0.001" 
-                      step="0.001" 
-                      value={newOffer.price}
-                      onChange={(e) => setNewOffer({...newOffer, price: e.target.value})}
-                    />
+                    <div className="input-with-clear">
+                      <input 
+                        type="number" 
+                        min="0.001" 
+                        step="0.001" 
+                        value={newOffer.price}
+                        onChange={(e) => setNewOffer({...newOffer, price: e.target.value})}
+                      />
+                      <button 
+                        type="button"
+                        className="btn-clear"
+                        onClick={() => setNewOffer({...newOffer, price: ''})}
+                        title="Clear price"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={createOffer}
-                    disabled={loading}
-                  >
-                    {loading ? 'Creating...' : 'Create Offer'}
-                  </button>
+                  <div className="button-group">
+                    <button 
+                      className="btn btn-primary" 
+                      onClick={createOffer}
+                      disabled={loading}
+                    >
+                      {loading ? 'Creating...' : 'Create Offer'}
+                    </button>
+                    <button 
+                      className="btn btn-secondary" 
+                      onClick={() => setNewOffer({amount: '', price: ''})}
+                      type="button"
+                    >
+                      Clear All
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
